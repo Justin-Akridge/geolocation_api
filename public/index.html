@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="//cdn.jsdelivr.net/npm/p5@1.5.0/lib/p5.min.js"></script>
+  <title>Document</title>
+</head>
+<body>
+  <h1>Data Selfie App</h1>
+  <p>
+    latitude: <span id="latitude"></span>&deg
+    longitude: <span id="longitude"></span>&deg
+  </p> 
+
+  <script>
+    function postCoordinates(){
+      if('geolocation' in navigator){
+      navigator.geolocation.getCurrentPosition(async position => {
+        const lat = position.coords.latitude
+        const lon = position.coords.longitude
+        document.getElementById('latitude').textContent = lat
+        document.getElementById('longitude').textContent= lon
+
+        const data = { lat, lon }
+        const options = {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        }
+        const response = await fetch('/api', options)
+        const json = await response.json()
+        console.log(data)
+      })
+      }else{
+        console.log("geolocation is offline")
+      } 
+    }
+    postCoordinates()
+     setInterval(postCoordinates, 1000)
+  </script>
+</body>
+</html>
